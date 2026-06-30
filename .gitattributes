@@ -1,0 +1,2 @@
+# Normaliza finais de linha: o Git guarda como LF e converte conforme o SO.
+* text=auto eol=lf
