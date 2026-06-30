@@ -36,16 +36,18 @@ export function CalibrationWizard({
 }: Props) {
   return (
     <div className="calib">
+      {/* Camada de alvo em TELA CHEIA: o ponto vai até as bordas reais da tela,
+          forçando uma amplitude de olhar suficiente para uma boa calibração. */}
+      <div className="calib__targets">
+        <div className={`calib__target ${TARGET_POSITION[currentStep]}`}>✕</div>
+      </div>
+
+      {/* Caixa de instruções/ações fica no rodapé, livre da área do alvo. */}
       <div className="calib__box">
         <p className="calib__step">
           Etapa {stepIndex + 1} de {totalSteps}
         </p>
         <h2 className="calib__instruction">{currentLabel}</h2>
-
-        {/* Alvo grande que o paciente deve olhar. */}
-        <div className="calib__stage">
-          <div className={`calib__target ${TARGET_POSITION[currentStep]}`} />
-        </div>
 
         {!faceDetected && (
           <p className="calib__warn">⚠️ Rosto não detectado — ajuste a câmera.</p>

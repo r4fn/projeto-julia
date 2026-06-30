@@ -24,9 +24,9 @@ export const CALIBRATION_STEPS = ['center', 'left', 'right'] as const;
 export type CalibrationStep = (typeof CALIBRATION_STEPS)[number];
 
 const STEP_LABELS: Record<CalibrationStep, string> = {
-  center: 'Peça para olhar para o CENTRO da tela',
-  left: 'Peça para olhar para a ESQUERDA da tela',
-  right: 'Peça para olhar para a DIREITA da tela',
+  center: 'Peça para olhar para o ✕ no CENTRO',
+  left: 'Peça para olhar para o ✕ na borda ESQUERDA',
+  right: 'Peça para olhar para o ✕ na borda DIREITA',
 };
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));

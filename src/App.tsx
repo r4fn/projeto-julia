@@ -3,10 +3,9 @@
  * áudio e interface. A lógica pesada vive nos hooks; aqui só montamos a tela.
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CameraView } from './components/CameraView';
-import { ProgressBar } from './components/ProgressBar';
-import { AnswerDisplay } from './components/AnswerDisplay';
+import { ChoiceBoard } from './components/ChoiceBoard';
 import { SettingsPanel } from './components/SettingsPanel';
 import { CalibrationWizard } from './components/CalibrationWizard';
 import { DebugOverlay } from './components/DebugOverlay';
@@ -76,6 +75,17 @@ export default function App() {
 
   const handleRestart = () => setCurrentAnswer(null);
 
+  // Reinício automático: depois de mostrar a resposta por alguns segundos,
+  // o tabuleiro volta ao estado "ao vivo" para a próxima pergunta — sem
+  // precisar apertar "Reiniciar". O tempo de exibição acompanha o cooldown
+  // (mínimo de 3s) para que a volta coincida com a liberação de nova resposta.
+  useEffect(() => {
+    if (currentAnswer === null) return;
+    const displayMs = Math.max(settings.cooldownMs, 3000);
+    const id = window.setTimeout(() => setCurrentAnswer(null), displayMs);
+    return () => window.clearTimeout(id);
+  }, [currentAnswer, settings.cooldownMs]);
+
   return (
     <div className="app">
       <header className="app__header">
@@ -123,16 +133,12 @@ export default function App() {
       {/* Área principal */}
       {status === 'ready' && (
         <main className="app__main">
-          <AnswerDisplay
+          <ChoiceBoard
             answer={currentAnswer}
             direction={sample.direction}
-            faceDetected={sample.faceDetected}
-          />
-
-          <ProgressBar
             progress={progress}
-            direction={sample.direction}
             invertSides={settings.invertSides}
+            faceDetected={sample.faceDetected}
           />
 
           <div className="status-row">

@@ -24,7 +24,9 @@
 
 .app__main {
   width: 100%;
-  max-width: 720px;
+  /* Largura total: o tabuleiro precisa do espaço horizontal inteiro.
+     Os demais blocos (status, botões) se centralizam sozinhos. */
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -77,6 +79,141 @@
   object-fit: cover;
   /* Espelha como um espelho (vídeo e overlay juntos). */
   transform: scaleX(-1);
+}
+
+/* ===== Tabuleiro de escolha (SIM/NÃO nas pontas) ===== */
+.board {
+  position: relative;
+  /* Ocupa a largura real da tela, cancelando o padding (16px) do .app, para
+     o ❌/✅ encostarem na borda igual ao ✕ da calibração — sem margem "gorda". */
+  width: calc(100% + 32px);
+  margin: 0 -16px;
+  /* Ocupa quase toda a altura disponível da tela. */
+  height: min(74vh, 680px);
+  display: flex;
+  align-items: center;
+  /* SIM e NÃO bem afastados, cada um na sua ponta (ideal em paisagem). */
+  justify-content: space-between;
+  /* Mesmo recuo dos alvos (✕) da calibração. */
+  padding: 0 clamp(20px, 3vw, 56px);
+}
+/* Linha divisória sutil no centro do tabuleiro. */
+.board::before {
+  content: '';
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  pointer-events: none;
+}
+/* Cada lado é só um agrupador transparente do ❌/✅ — sem quadrado. */
+.board__side {
+  position: relative;
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  transition: opacity 200ms ease, filter 200ms ease;
+}
+
+.board__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  transition: transform 140ms ease;
+}
+.board__emoji {
+  font-size: clamp(4rem, 20vw, 12rem);
+  line-height: 1;
+}
+.board__label {
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: clamp(2.5rem, 13vw, 7rem);
+  line-height: 1;
+}
+.board__side--yes .board__label {
+  color: var(--yes);
+}
+.board__side--no .board__label {
+  color: var(--no);
+}
+
+/* Lado para onde a pessoa está olhando: cresce e brilha. */
+.board__side.is-active .board__content {
+  transform: scale(1.1);
+}
+.board__side.is-active.board__side--yes .board__emoji,
+.board__side.is-active.board__side--yes .board__label {
+  filter: drop-shadow(0 0 30px var(--yes));
+}
+.board__side.is-active.board__side--no .board__emoji,
+.board__side.is-active.board__side--no .board__label {
+  filter: drop-shadow(0 0 30px var(--no));
+}
+
+/* Barra de confirmação fininha sob o ❌/✅ (sobe de 0% a 100%). */
+.board__progress {
+  width: clamp(120px, 20vw, 260px);
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.board__progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  transition: width 60ms linear;
+}
+.board__side--yes .board__progress-fill {
+  background: var(--yes);
+}
+.board__side--no .board__progress-fill {
+  background: var(--no);
+}
+
+/* Após confirmar: vencedor pulsa em destaque, perdedor escurece. */
+.board__side.is-winner .board__content {
+  animation: board-flash 0.5s ease-in-out 3;
+}
+.board__side.is-winner.board__side--yes .board__emoji,
+.board__side.is-winner.board__side--yes .board__label {
+  filter: drop-shadow(0 0 40px var(--yes));
+}
+.board__side.is-winner.board__side--no .board__emoji,
+.board__side.is-winner.board__side--no .board__label {
+  filter: drop-shadow(0 0 40px var(--no));
+}
+.board__side.is-loser {
+  opacity: 0.2;
+  filter: grayscale(0.7);
+}
+@keyframes board-flash {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.board__notice {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
 }
 
 /* ===== Resposta grande ===== */
@@ -275,52 +412,68 @@
   inset: 0;
   background: rgba(15, 23, 42, 0.96);
   z-index: 30;
+  /* Caixa de instruções ancorada no rodapé; o alvo usa a tela toda. */
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   padding: 16px;
 }
 .calib__box {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 640px;
   text-align: center;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 4vh;
 }
 .calib__step {
   color: var(--muted);
   margin: 0 0 4px;
 }
 .calib__instruction {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   font-size: clamp(1.2rem, 4vw, 1.8rem);
 }
-.calib__stage {
-  position: relative;
-  height: 180px;
-  background: var(--bg-soft);
-  border-radius: 16px;
-  margin-bottom: 16px;
+
+/* Camada do alvo: cobre a tela inteira, atrás da caixa de instruções. */
+.calib__targets {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 .calib__target {
   position: absolute;
-  top: 50%;
-  width: 48px;
-  height: 48px;
+  /* Alvo grande e bem visível, com o "✕" no centro para fixar o olhar. */
+  top: 42%;
+  width: clamp(72px, 9vw, 130px);
+  height: clamp(72px, 9vw, 130px);
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 24px var(--accent);
+  color: #082f49;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 900;
+  box-shadow: 0 0 40px var(--accent);
   animation: pulse 1.2s ease-in-out infinite;
 }
 .calib__target--center {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+/* Bem nas bordas da tela, para máxima amplitude do olhar. */
 .calib__target--left {
-  left: 12%;
-  transform: translate(-50%, -50%);
+  left: clamp(20px, 3vw, 56px);
+  transform: translateY(-50%);
 }
 .calib__target--right {
-  left: 88%;
-  transform: translate(-50%, -50%);
+  right: clamp(20px, 3vw, 56px);
+  transform: translateY(-50%);
 }
 @keyframes pulse {
   0%,
