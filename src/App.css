@@ -1,0 +1,373 @@
+/* ===== Layout geral ===== */
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+}
+
+.app__header {
+  text-align: center;
+}
+.app__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  letter-spacing: 0.5px;
+}
+.app__subtitle {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+}
+
+.app__main {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ===== Tela inicial ===== */
+.start {
+  margin-top: 18vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 420px;
+}
+.start__text {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.start__error {
+  color: var(--no);
+  font-size: 1.05rem;
+}
+
+/* ===== Câmera ===== */
+.camera {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.camera--hidden {
+  /* Mantém o vídeo no DOM (processando), porém invisível e fora do fluxo. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.camera__video,
+.camera__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Espelha como um espelho (vídeo e overlay juntos). */
+  transform: scaleX(-1);
+}
+
+/* ===== Resposta grande ===== */
+.answer {
+  width: 100%;
+  text-align: center;
+  font-weight: 800;
+  font-size: clamp(3rem, 18vw, 8rem);
+  line-height: 1;
+  padding: 8px 0;
+  min-height: 1.1em;
+}
+.answer--yes {
+  color: var(--yes);
+  text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+}
+.answer--no {
+  color: var(--no);
+  text-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+}
+.answer--idle {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: clamp(1rem, 4vw, 1.6rem);
+}
+
+/* ===== Barra de progresso ===== */
+.progress {
+  width: 100%;
+  max-width: 560px;
+}
+.progress__track {
+  position: relative;
+  height: 26px;
+  background: var(--bg-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  transition: width 60ms linear;
+}
+.progress__mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-1px);
+}
+.progress__labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* ===== Linha de status (pills) ===== */
+.status-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pill {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--muted);
+}
+.pill--ok {
+  color: #052e16;
+  background: var(--yes);
+}
+.pill--off {
+  color: #fff;
+  background: #475569;
+}
+.pill--warn {
+  color: #422006;
+  background: #f59e0b;
+}
+.pill--cool {
+  color: #082f49;
+  background: var(--accent);
+}
+
+/* ===== Botões ===== */
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 80ms ease, opacity 120ms ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn--primary {
+  background: var(--accent);
+  color: #082f49;
+  font-weight: 700;
+}
+.btn--ghost {
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+/* ===== Painel de configurações ===== */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(380px, 90vw);
+  background: var(--bg-soft);
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.panel__header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.panel__body {
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field span {
+  font-size: 0.9rem;
+}
+.field small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.field input[type='range'] {
+  width: 100%;
+}
+.field select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.9rem;
+}
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+.switch input {
+  width: 20px;
+  height: 20px;
+}
+.panel__reset {
+  margin-top: 8px;
+}
+
+/* ===== Calibração ===== */
+.calib {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.96);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.calib__box {
+  width: 100%;
+  max-width: 640px;
+  text-align: center;
+}
+.calib__step {
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+.calib__instruction {
+  margin: 0 0 16px;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+}
+.calib__stage {
+  position: relative;
+  height: 180px;
+  background: var(--bg-soft);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+.calib__target {
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 24px var(--accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.calib__target--center {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.calib__target--left {
+  left: 12%;
+  transform: translate(-50%, -50%);
+}
+.calib__target--right {
+  left: 88%;
+  transform: translate(-50%, -50%);
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    scale: 1;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.25;
+  }
+}
+.calib__warn {
+  color: #f59e0b;
+}
+.calib__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* ===== Depuração ===== */
+.debug {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.debug__title {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.debug__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.debug__list li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+.debug__list span {
+  color: var(--muted);
+}

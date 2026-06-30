@@ -1,0 +1,36 @@
+/* Reset enxuto e variáveis globais. */
+:root {
+  --bg: #0f172a;
+  --bg-soft: #1e293b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --yes: #22c55e;
+  --no: #ef4444;
+  --accent: #38bdf8;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  /* Evita seleção acidental de texto em telas de toque (tablet). */
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+}
